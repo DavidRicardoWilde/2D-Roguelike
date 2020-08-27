@@ -17,26 +17,32 @@ public class Player : MovingObject
     
     private Animator animator;
     private int food;
+    private bool reward = true;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         // throw new NotImplementedException();
         if (other.tag == "Exit")
         {
+            if (reward)
+            {
+                food += 10;
+                foodText.text = "reward + " + pointsPerFood;
+            }
             Invoke(nameof(Restart), restartLevelDelay);
+            // reward = true;
             enabled = false;
-            // Add 10 Food
         }
         else if (other.tag == "Food")
         {
             food += pointsPerFood;
-            foodText.text = "+" + pointsPerFood + " Food" + food;
+            foodText.text = "+" + pointsPerFood + " Food";
             other.gameObject.SetActive(false);
         }
         else if (other.tag == "Soda")
         {
             food += pointsPerSoda;
-            foodText.text = "+" + pointsPerSoda + " Food" + food;
+            foodText.text = "+" + pointsPerSoda + " Food";
             other.gameObject.SetActive(false);
         }
     }
@@ -92,9 +98,10 @@ public class Player : MovingObject
 
     public void LoseFood(int loss)
     {
+        reward = false;
         animator.SetTrigger("playerHit");
         food -= loss;
-        foodText.text = "-" + loss + " Food" + food;
+        foodText.text = "-" + loss + " Food";
 
         CheckIfGameOver();
     }
